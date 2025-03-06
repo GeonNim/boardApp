@@ -12,7 +12,7 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-data class AuthRequest(val email: String, val password: String)
+data class AuthRequest(val email: String, val password: String, val nickname: String, val age: Int?, val phoneNumber: String?)
 
 fun Application.AuthController() {
     routing {
@@ -24,6 +24,9 @@ fun Application.AuthController() {
                 UserTable.insert {
                     it[email] = request.email
                     it[password] = hashedPassword
+                    it[nickname] = request.nickname
+                    it[age] = request.age
+                    it[phoneNumber] = request.phoneNumber
                 }
             }
             call.respondText("User registered successfully!")
