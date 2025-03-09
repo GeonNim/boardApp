@@ -12,12 +12,15 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-data class AuthRequest(val email: String, val password: String, val nickname: String, val age: Int?, val phoneNumber: String?)
-
+data class SignupRequest(val email: String, val password: String, val nickname: String, val age: Int?, val phoneNumber: String?)
+data class LoginRequest(
+    val email: String,
+    val password: String
+)
 fun Application.AuthController() {
     routing {
         post("/register") {
-            val request = call.receive<AuthRequest>()
+            val request = call.receive<SignupRequest>()
             val hashedPassword = BCrypt.withDefaults().hashToString(12, request.password.toCharArray())
 
             transaction {
@@ -33,7 +36,7 @@ fun Application.AuthController() {
         }
 
         post("/login") {
-            val request = call.receive<AuthRequest>()
+            val request = call.receive<LoginRequest>()
 
             val user = transaction {
                 UserTable.select { UserTable.email eq request.email }.singleOrNull()
